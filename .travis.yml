@@ -67,15 +67,13 @@ install:
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install pexpect; fi
     - "echo pkg-config path: [$PKG_CONFIG_PATH]"
 script:
-    - ./bootstrap.sh
     - mkdir build
     - cd build
-    - ../configure --enable-perl --enable-python --enable-tcl --enable-cyrus --enable-charset $CFGFLAGS CXXFLAGS="$CXXFLAGS $MYCXXFLAGS" LDFLAGS="$LDFLAGS $MYLDFLAGS"
+    - ../configure --enable-perl --enable-python --enable-tcl --enable-cyrus --enable-charset $CFGFLAGS CC="$CC" CXX="$CXX" CXXFLAGS="$CXXFLAGS $MYCXXFLAGS" LDFLAGS="$LDFLAGS $MYLDFLAGS"
     - cat config.log
-    - make V=1
-    - make V=1 test
+    - make VERBOSE=1
+    - make VERBOSE=1 test
     - sudo make install
-    - make test2
     - cd ..
 after_success:
     - test -r .travis_after_all.py && python .travis_after_all.py || echo No .travis_after_all.py found

@@ -25,7 +25,7 @@ Core:
 * GNU make
 * pkg-config
 * GCC 4.7 or clang 3.2
-* autoconf and automake (if building from git)
+* CMake 2.8 or later
 
 ## Optional Requirements
 
@@ -54,9 +54,7 @@ Character Encodings:
 
 ## Installing ZNC
 
-Installation from source code is performed using the `automake` toolchain.
-If you are building from git, you will need to run `./autogen.sh` first to
-produce the `configure` script.
+Installation from source code is performed using the `CMake` build system.
 
 ```shell
 ./configure
