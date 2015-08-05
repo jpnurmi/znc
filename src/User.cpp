@@ -385,11 +385,11 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 			continue;
 		}
 
-		// XXX Legacy crap, added in ZNC 0.207
-		if (sModName == "admin") {
-			sNotice = "NOTICE: [admin] module was renamed, loading [controlpanel] instead";
-			sModName = "controlpanel";
-		}
+//		// XXX Legacy crap, added in ZNC 0.207
+//		if (sModName == "admin") {
+//			sNotice = "NOTICE: [admin] module was renamed, loading [controlpanel] instead";
+//			sModName = "controlpanel";
+//		}
 		
 		// XXX Legacy crap, should have been added ZNC 0.207, but added only in 1.1 :(
 		if (sModName == "away") {
