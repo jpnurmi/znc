@@ -36,21 +36,20 @@ public:
 
 	bool OnLoad(const CString& sArgs, CString& sMessage) override {
 		VCString vArgs;
-		VCString::iterator it;
-		MCString::iterator it2;
+		MCString::iterator it;
 
 		// Load saved settings
-		for (it2 = BeginNV(); it2 != EndNV(); ++it2) {
+		for (it = BeginNV(); it != EndNV(); ++it) {
 			// Ignore errors
-			Block(it2->first, it2->second);
+			Block(it->first, it->second);
 		}
 
 		// Parse arguments, each argument is a user name to block
 		sArgs.Split(" ", vArgs, false);
 
-		for (it = vArgs.begin(); it != vArgs.end(); ++it) {
-			if (!Block(*it)) {
-				sMessage = "Could not block [" + *it + "]";
+		for (const CString& sArg : vArgs) {
+			if (!Block(sArg)) {
+				sMessage = "Could not block [" + sArg + "]";
 				return false;
 			}
 		}
@@ -186,13 +185,13 @@ private:
 		vector<CClient*> vpClients = pUser->GetAllClients();
 		for (CClient* pClient : vpClients) {
 			pClient->PutStatusNotice("Blocked: " + (sReason.empty() ? DEFAULT_REASON : sReason));
-			pClient->GetSocket()->Close(Csock::CLT_AFTERWRITE);
+			pClient->GetSocket()->Close(CZNCSock::CLT_AFTERWRITE);
 		}
 
 		// Disconnect all networks from irc
 		vector<CIRCNetwork*> vNetworks = pUser->GetNetworks();
-		for (vector<CIRCNetwork*>::iterator it2 = vNetworks.begin(); it2 != vNetworks.end(); ++it2) {
-			(*it2)->SetIRCConnectEnabled(false);
+		for (CIRCNetwork* pNetwork : vNetworks) {
+			pNetwork->SetIRCConnectEnabled(false);
 		}
 
 		SetNV(pUser->GetUserName(), sReason);
