@@ -776,6 +776,20 @@ bool CIRCNetwork::PutStatus(const CString& sLine, CClient* pClient, CClient* pSk
 	return (pClient == nullptr);
 }
 
+bool CIRCNetwork::PutStatusNotice(const CString& sLine, CClient* pClient, CClient* pSkipClient) {
+	for (CClient* pEachClient : m_vClients) {
+		if ((!pClient || pClient == pEachClient) && pSkipClient != pEachClient) {
+			pEachClient->PutStatusNotice(sLine);
+
+			if (pClient) {
+				return true;
+			}
+		}
+	}
+
+	return (pClient == nullptr);
+}
+
 bool CIRCNetwork::PutModule(const CString& sModule, const CString& sLine, CClient* pClient, CClient* pSkipClient) {
 	for (CClient* pEachClient : m_vClients) {
 		if ((!pClient || pClient == pEachClient) && pSkipClient != pEachClient) {

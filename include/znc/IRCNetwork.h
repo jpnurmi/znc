@@ -93,6 +93,7 @@ public:
 	bool PutUser(const CString& sLine, CClient* pClient = nullptr, CClient* pSkipClient = nullptr);
 	bool PutUser(const CMessage& Message, CClient* pClient = nullptr, CClient* pSkipClient = nullptr);
 	bool PutStatus(const CString& sLine, CClient* pClient = nullptr, CClient* pSkipClient = nullptr);
+	bool PutStatusNotice(const CString& sLine, CClient* pClient = nullptr, CClient* pSkipClient = nullptr);
 	bool PutModule(const CString& sModule, const CString& sLine, CClient* pClient = nullptr, CClient* pSkipClient = nullptr);
 
 	const std::vector<CChan*>& GetChans() const;
