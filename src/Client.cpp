@@ -1260,8 +1260,11 @@ bool CClient::OnOtherMessage(CMessage& Message)
 		set<CChan*> sChans = MatchChans(sPatterns);
 		unsigned int uAttachedChans = AttachChans(sChans);
 
-		PutStatusNotice("There were [" + CString(sChans.size()) + "] channels matching [" + sPatterns + "]");
-		PutStatusNotice("Attached [" + CString(uAttachedChans) + "] channels");
+		set<CQuery*> sQueries = MatchQueries(sPatterns);
+		unsigned int uAttachedQueries = AttachQueries(sQueries);
+
+		PutStatusNotice("There were [" + CString(sChans.size()) + "] channels and [" + CString(sQueries.size()) + "] queries matching [" + sPatterns + "]");
+		PutStatusNotice("Attached [" + CString(uAttachedChans) + "] channels and [" + CString(uAttachedQueries) + "] queries");
 
 		return true;
 	} else if (sCommand.Equals("DETACH")) {
@@ -1277,10 +1280,13 @@ bool CClient::OnOtherMessage(CMessage& Message)
 		}
 
 		set<CChan*> sChans = MatchChans(sPatterns);
-		unsigned int uDetached = DetachChans(sChans);
+		unsigned int uDetachedChans = DetachChans(sChans);
 
-		PutStatusNotice("There were [" + CString(sChans.size()) + "] channels matching [" + sPatterns + "]");
-		PutStatusNotice("Detached [" + CString(uDetached) + "] channels");
+		set<CQuery*> sQueries = MatchQueries(sPatterns);
+		unsigned int uDetachedQueries = DetachQueries(sQueries);
+
+		PutStatusNotice("There were [" + CString(sChans.size()) + "] channels and [" + CString(sQueries.size()) + "] queries matching [" + sPatterns + "]");
+		PutStatusNotice("Detached [" + CString(uDetachedChans) + "] channels and [" + CString(uDetachedQueries) + "] queries");
 
 		return true;
 	} else if (sCommand.Equals("PROTOCTL")) {
