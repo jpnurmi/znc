@@ -25,17 +25,24 @@ public:
 
 	virtual ~CBuffExtras() {}
 
-	void AddBuffer(CChan& Channel, const CString& sMessage, const timeval* tv = nullptr, const MCString& mssTags = MCString::EmptyMap) {
+	void AddBuffer(CChan& Channel, const CMessage& Message, const CString& sText) {
 		// If they have AutoClearChanBuffer enabled, only add messages if no client is connected
 		if (Channel.AutoClearChanBuffer() && GetNetwork()->IsUserOnline())
 			return;
 
-		Channel.AddBuffer(":" + GetModNick() + "!" + GetModName() + "@znc.in PRIVMSG " + _NAMEDFMT(Channel.GetName()) + " :{text}", sMessage, tv, mssTags);
+		CNick Nick(GetModNick() + "!" + GetModName() + "@znc.in");
+		CMessage Format(Nick, "PRIVMSG", {_NAMEDFMT(Channel.GetName()), "{text}"}, Message.GetTags());
+		Format.SetTime(Message.GetTime());
+		Channel.AddBuffer(Format, sText);
 	}
 
-	void OnRawMode2(const CNick* pOpNick, CChan& Channel, const CString& sModes, const CString& sArgs) override {
-		const CString sNickMask = pOpNick ? pOpNick->GetNickMask() : "Server";
-		AddBuffer(Channel, sNickMask + " set mode: " + sModes + " " + sArgs);
+	void OnModeMessage(CModeMessage& Message) override {
+		CChan* pChan = Message.GetChan();
+		if (pChan) {
+			const CNick& Nick = Message.GetNick();
+			const CString sModes = Message.GetModes();
+			AddBuffer(*pChan, Message, Nick.GetNickMask() + " set mode: " + sModes);
+		}
 	}
 
 	void OnKickMessage(CKickMessage& Message) override {
@@ -43,7 +50,7 @@ public:
 		const CString sKickedNick = Message.GetKickedNick();
 		CChan& Channel = *Message.GetChan();
 		const CString sMessage = Message.GetReason();
-		AddBuffer(Channel, OpNick.GetNickMask() + " kicked " + sKickedNick + " Reason: [" + sMessage + "]", &Message.GetTime(), Message.GetTags());
+		AddBuffer(Channel, Message, OpNick.GetNickMask() + " kicked " + sKickedNick + " Reason: [" + sMessage + "]");
 	}
 
 	void OnQuitMessage(CQuitMessage& Message, const vector<CChan*>& vChans) override {
@@ -51,21 +58,21 @@ public:
 		const CString sMessage = Message.GetReason();
 		CString sMsg = Nick.GetNickMask() + " quit with message: [" + sMessage + "]";
 		for (CChan* pChan : vChans) {
-			AddBuffer(*pChan, sMsg, &Message.GetTime(), Message.GetTags());
+			AddBuffer(*pChan, Message, sMsg);
 		}
 	}
 
 	void OnJoinMessage(CJoinMessage& Message) override {
 		const CNick& Nick = Message.GetNick();
 		CChan& Channel = *Message.GetChan();
-		AddBuffer(Channel, Nick.GetNickMask() + " joined", &Message.GetTime(), Message.GetTags());
+		AddBuffer(Channel, Message, Nick.GetNickMask() + " joined");
 	}
 
 	void OnPartMessage(CPartMessage& Message) override {
 		const CNick& Nick = Message.GetNick();
 		CChan& Channel = *Message.GetChan();
 		const CString sMessage = Message.GetReason();
-		AddBuffer(Channel, Nick.GetNickMask() + " parted with message: [" + sMessage + "]", &Message.GetTime(), Message.GetTags());
+		AddBuffer(Channel, Message, Nick.GetNickMask() + " parted with message: [" + sMessage + "]");
 	}
 
 	void OnNickMessage(CNickMessage& Message, const vector<CChan*>& vChans) override {
@@ -73,7 +80,7 @@ public:
 		const CString sNewNick = Message.GetNewNick();
 		CString sMsg = OldNick.GetNickMask() + " is now known as " + sNewNick;
 		for (CChan* pChan : vChans) {
-			AddBuffer(*pChan, sMsg, &Message.GetTime(), Message.GetTags());
+			AddBuffer(*pChan, Message, sMsg);
 		}
 	}
 
@@ -81,7 +88,7 @@ public:
 		const CNick& Nick = Message.GetNick();
 		CChan& Channel = *Message.GetChan();
 		const CString sTopic = Message.GetTopic();
-		AddBuffer(Channel, Nick.GetNickMask() + " changed the topic to: " + sTopic, &Message.GetTime(), Message.GetTags());
+		AddBuffer(Channel, Message, Nick.GetNickMask() + " changed the topic to: " + sTopic);
 
 		return CONTINUE;
 	}
