@@ -179,8 +179,10 @@ TEST_F(IRCSockTest, OnModeMessage) {
 	CMessage msg(":nick MODE #chan +k key");
 	m_pTestSock->ReadLine(msg.ToString());
 
-	EXPECT_THAT(m_pTestModule->vsHooks, IsEmpty()); // no OnModeMessage() hook (yet?)
-	EXPECT_THAT(m_pTestClient->vsLines, ElementsAre(msg.ToString()));
+	EXPECT_THAT(m_pTestModule->vsHooks, ElementsAre("OnModeMessage"));
+	EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
+	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(m_pTestNetwork));
+	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(m_pTestChan));
 }
 
 TEST_F(IRCSockTest, OnNickMessage) {

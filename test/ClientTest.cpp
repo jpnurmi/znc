@@ -229,6 +229,23 @@ TEST_F(ClientTest, OnUserTextMessage) {
 	EXPECT_THAT(m_pTestSock->vsLines, ElementsAre(msg.ToString()));
 }
 
+TEST_F(ClientTest, OnUserModeMessage) {
+	CMessage msg("MODE #chan +k key");
+	m_pTestModule->eAction = CModule::HALT;
+	m_pTestClient->ReadLine(msg.ToString());
+
+	EXPECT_THAT(m_pTestModule->vsHooks, ElementsAre("OnUserModeMessage"));
+	EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
+	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(nullptr));
+	EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
+	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
+	EXPECT_THAT(m_pTestSock->vsLines, IsEmpty()); // halt
+
+	m_pTestModule->eAction = CModule::CONTINUE;
+	m_pTestClient->ReadLine(msg.ToString());
+	EXPECT_THAT(m_pTestSock->vsLines, ElementsAre(msg.ToString()));
+}
+
 TEST_F(ClientTest, OnUserNoticeMessage) {
 	CMessage msg("NOTICE #chan :text");
 	m_pTestModule->eAction = CModule::HALT;

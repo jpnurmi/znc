@@ -556,6 +556,12 @@ public:
 	virtual void OnRawMode2(const CNick* pOpNick, CChan& Channel, const CString& sModes, const CString& sArgs);
 	virtual void OnRawMode(const CNick& OpNick, CChan& Channel, const CString& sModes, const CString& sArgs);
 
+	/** Called when a mode message is received from the <em>IRC server</em>.
+	 *  @since 1.7.0
+	 *  @param Message The received message.
+	 */
+	virtual void OnModeMessage(CModeMessage& Message);
+
 	/** Called on any raw IRC line received from the <em>IRC server</em>.
 	 *  @param sLine The line read from the server.
 	 *  @note The line does not include message tags. Use OnRawMessage() to access them.
@@ -749,6 +755,13 @@ public:
 	virtual EModRet OnUserTextMessage(CTextMessage& Message);
 	/// @deprecated Use OnUserTextMessage() instead.
 	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage);
+
+	/** This module hook is called when a user wants to request or set a mode.
+	 *  @since 1.7.0
+	 *  @param Message The mode message the client sent.
+	 *  @return See CModule::EModRet.
+	 */
+	virtual EModRet OnUserModeMessage(CModeMessage& Message);
 
 	/** This module hook is called when a user sends a notice message.
 	 *  @since 1.7.0
@@ -1265,6 +1278,7 @@ public:
 	bool OnRawMode(const CNick& OpNick, CChan& Channel, const CString& sModes, const CString& sArgs);
 	bool OnMode2(const CNick* pOpNick, CChan& Channel, char uMode, const CString& sArg, bool bAdded, bool bNoChange);
 	bool OnMode(const CNick& OpNick, CChan& Channel, char uMode, const CString& sArg, bool bAdded, bool bNoChange);
+	bool OnModeMessage(CModeMessage& Message);
 
 	bool OnRaw(CString& sLine);
 	bool OnRawMessage(CMessage& Message);
@@ -1320,6 +1334,7 @@ public:
 	bool OnUserTopicRequest(CString& sChannel);
 	bool OnUserQuit(CString& sMessage);
 	bool OnUserQuitMessage(CQuitMessage& Message);
+	bool OnUserModeMessage(CModeMessage& Message);
 
 	bool OnCTCPReply(CNick& Nick, CString& sMessage);
 	bool OnCTCPReplyMessage(CCTCPMessage& Message);

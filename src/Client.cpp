@@ -998,6 +998,10 @@ bool CClient::OnModeMessage(CModeMessage& Message)
 	CString sTarget = Message.GetTarget();
 	CString sModes = Message.GetModes();
 
+	bool bReturn = false;
+	NETWORKMODULECALL(OnUserModeMessage(Message), m_pUser, m_pNetwork, this, &bReturn);
+	if (bReturn) return true;
+
 	if (m_pNetwork && m_pNetwork->IsChan(sTarget) && sModes.empty()) {
 		// If we are on that channel and already received a
 		// /mode reply from the server, we can answer this

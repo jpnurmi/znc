@@ -615,6 +615,7 @@ void CModule::OnVoice(const CNick& pOpNick, const CNick& Nick, CChan& Channel, b
 void CModule::OnDevoice(const CNick& pOpNick, const CNick& Nick, CChan& Channel, bool bNoChange) {}
 void CModule::OnRawMode(const CNick& pOpNick, CChan& Channel, const CString& sModes, const CString& sArgs) {}
 void CModule::OnMode(const CNick& pOpNick, CChan& Channel, char uMode, const CString& sArg, bool bAdded, bool bNoChange) {}
+void CModule::OnModeMessage(CModeMessage& Message) {}
 
 CModule::EModRet CModule::OnRaw(CString& sLine) { return CONTINUE; }
 CModule::EModRet CModule::OnRawMessage(CMessage& Message) { return CONTINUE; }
@@ -721,6 +722,9 @@ CModule::EModRet CModule::OnUserTextMessage(CTextMessage& Message) {
 	Message.SetText(sText);
 	return ret;
 }
+
+CModule::EModRet CModule::OnUserModeMessage(CModeMessage& Message) { return CONTINUE; }
+
 CModule::EModRet CModule::OnUserNotice(CString& sTarget, CString& sMessage) { return CONTINUE; }
 CModule::EModRet CModule::OnUserNoticeMessage(CNoticeMessage& Message) {
 	CString sTarget = Message.GetTarget();
@@ -970,6 +974,7 @@ bool CModules::OnRawMode2(const CNick* pOpNick, CChan& Channel, const CString& s
 bool CModules::OnRawMode(const CNick& OpNick, CChan& Channel, const CString& sModes, const CString& sArgs) { MODUNLOADCHK(OnRawMode(OpNick, Channel, sModes, sArgs)); return false; }
 bool CModules::OnMode2(const CNick* pOpNick, CChan& Channel, char uMode, const CString& sArg, bool bAdded, bool bNoChange) { MODUNLOADCHK(OnMode2(pOpNick, Channel, uMode, sArg, bAdded, bNoChange)); return false; }
 bool CModules::OnMode(const CNick& OpNick, CChan& Channel, char uMode, const CString& sArg, bool bAdded, bool bNoChange) { MODUNLOADCHK(OnMode(OpNick, Channel, uMode, sArg, bAdded, bNoChange)); return false; }
+bool CModules::OnModeMessage(CModeMessage& Message) { MODUNLOADCHK(OnModeMessage(Message)); return false; }
 bool CModules::OnRaw(CString& sLine) { MODHALTCHK(OnRaw(sLine)); }
 bool CModules::OnRawMessage(CMessage& Message) { MODHALTCHK(OnRawMessage(Message)); }
 bool CModules::OnNumericMessage(CNumericMessage& Message) { MODHALTCHK(OnNumericMessage(Message)); }
@@ -986,6 +991,7 @@ bool CModules::OnUserAction(CString& sTarget, CString& sMessage) { MODHALTCHK(On
 bool CModules::OnUserActionMessage(CActionMessage& Message) { MODHALTCHK(OnUserActionMessage(Message)); }
 bool CModules::OnUserMsg(CString& sTarget, CString& sMessage) { MODHALTCHK(OnUserMsg(sTarget, sMessage)); }
 bool CModules::OnUserTextMessage(CTextMessage& Message) { MODHALTCHK(OnUserTextMessage(Message)); }
+bool CModules::OnUserModeMessage(CModeMessage& Message) { MODHALTCHK(OnUserModeMessage(Message)); }
 bool CModules::OnUserNotice(CString& sTarget, CString& sMessage) { MODHALTCHK(OnUserNotice(sTarget, sMessage)); }
 bool CModules::OnUserNoticeMessage(CNoticeMessage& Message) { MODHALTCHK(OnUserNoticeMessage(Message)); }
 bool CModules::OnUserJoin(CString& sChannel, CString& sKey) { MODHALTCHK(OnUserJoin(sChannel, sKey)); }

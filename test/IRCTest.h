@@ -71,6 +71,7 @@ public:
 	EModRet OnNumericMessage(CNumericMessage& msg) override { vsHooks.push_back("OnNumericMessage"); return OnMessage(msg); }
 	void OnJoinMessage(CJoinMessage& msg) override { vsHooks.push_back("OnJoinMessage"); OnMessage(msg); }
 	void OnKickMessage(CKickMessage& msg) override { vsHooks.push_back("OnKickMessage"); OnMessage(msg); }
+	void OnModeMessage(CModeMessage& msg) override { vsHooks.push_back("OnModeMessage"); OnMessage(msg); }
 	void OnNickMessage(CNickMessage& msg, const std::vector<CChan*>& vChans) override { vsHooks.push_back("OnNickMessage"); OnMessage(msg); }
 	void OnPartMessage(CPartMessage& msg) override { vsHooks.push_back("OnPartMessage"); OnMessage(msg); }
 	void OnQuitMessage(CQuitMessage& msg, const std::vector<CChan*>& vChans) override { vsHooks.push_back("OnQuitMessage"); OnMessage(msg); }
@@ -79,6 +80,7 @@ public:
 	EModRet OnUserCTCPMessage(CCTCPMessage& msg) override { vsHooks.push_back("OnUserCTCPMessage"); return OnMessage(msg); }
 	EModRet OnUserActionMessage(CActionMessage& msg) override { vsHooks.push_back("OnUserActionMessage"); return OnMessage(msg); }
 	EModRet OnUserTextMessage(CTextMessage& msg) override { vsHooks.push_back("OnUserTextMessage"); return OnMessage(msg); }
+	EModRet OnUserModeMessage(CModeMessage& msg) override { vsHooks.push_back("OnUserModeMessage"); return OnMessage(msg); }
 	EModRet OnUserNoticeMessage(CNoticeMessage& msg) override { vsHooks.push_back("OnUserNoticeMessage"); return OnMessage(msg); }
 	EModRet OnUserJoinMessage(CJoinMessage& msg) override { vsHooks.push_back("OnUserJoinMessage"); return OnMessage(msg); }
 	EModRet OnUserPartMessage(CPartMessage& msg) override { vsHooks.push_back("OnUserPartMessage"); return OnMessage(msg); }

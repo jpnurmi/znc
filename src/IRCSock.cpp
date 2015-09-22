@@ -538,6 +538,12 @@ bool CIRCSock::OnModeMessage(CModeMessage& Message) {
 	CString sModes = Message.GetModes();
 
 	CChan* pChan = m_pNetwork->FindChan(sTarget);
+	Message.SetChan(pChan);
+
+	bool bReturn = false;
+	IRCSOCKMODULECALL(OnModeMessage(Message), &bReturn);
+	if (bReturn) return true;
+
 	if (pChan) {
 		pChan->ModeChange(sModes, &Nick);
 
