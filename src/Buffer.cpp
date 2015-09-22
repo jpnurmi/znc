@@ -22,9 +22,8 @@
 CBufLine::CBufLine(const CMessage& Format, const CString& sText) : m_Message(Format), m_sText(sText) {
 }
 
-CBufLine::CBufLine(const CString& sFormat, const CString& sText, const timeval* ts, const MCString& mssTags) : m_sText(sText) {
+CBufLine::CBufLine(const CString& sFormat, const CString& sText, const timeval* ts) : m_sText(sText) {
 	m_Message.Parse(sFormat);
-	m_Message.SetTags(mssTags);
 
 	if (ts == nullptr)
 		UpdateTime();
@@ -123,12 +122,11 @@ CBuffer::size_type CBuffer::UpdateExactLine(const CMessage& Format, const CStrin
 	return AddLine(Format, sText);
 }
 
-CBuffer::size_type CBuffer::AddLine(const CString& sFormat, const CString& sText, const timeval* ts, const MCString& mssTags) {
+CBuffer::size_type CBuffer::AddLine(const CString& sFormat, const CString& sText, const timeval* ts) {
 	CMessage Message(sFormat);
 	if (ts) {
 		Message.SetTime(*ts);
 	}
-	Message.SetTags(mssTags);
 	return AddLine(Message, sText);
 }
 

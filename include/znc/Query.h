@@ -40,7 +40,7 @@ public:
 	bool SetBufferCount(unsigned int u, bool bForce = false) { return m_Buffer.SetLineCount(u, bForce); }
 	size_t AddBuffer(const CMessage& Format, const CString& sText = "") { return m_Buffer.AddLine(Format, sText); }
 	/// @deprecated
-	size_t AddBuffer(const CString& sFormat, const CString& sText = "", const timeval* ts = nullptr, const MCString& mssTags = MCString::EmptyMap) { return m_Buffer.AddLine(sFormat, sText, ts, mssTags); }
+	size_t AddBuffer(const CString& sFormat, const CString& sText = "", const timeval* ts = nullptr) { return m_Buffer.AddLine(sFormat, sText, ts); }
 	void ClearBuffer() { m_Buffer.Clear(); }
 	void SendBuffer(CClient* pClient);
 	void SendBuffer(CClient* pClient, const CBuffer& Buffer);

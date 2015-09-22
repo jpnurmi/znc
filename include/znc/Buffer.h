@@ -32,7 +32,7 @@ public:
 	CBufLine() : CBufLine("") { throw 0; } // shouldn't be called, but is needed for compilation
 	CBufLine(const CMessage& Format, const CString& sText = "");
 	/// @deprecated
-	CBufLine(const CString& sFormat, const CString& sText = "", const timeval* ts = nullptr, const MCString& mssTags = MCString::EmptyMap);
+	CBufLine(const CString& sFormat, const CString& sText = "", const timeval* ts = nullptr);
 	~CBufLine();
 	CMessage ToMessage(const CClient& Client, const MCString& mssParams) const;
 	/// @deprecated Use ToMessage() instead
@@ -72,7 +72,7 @@ public:
 	size_type UpdateLine(const CString& sCommand, const CMessage& Format, const CString& sText = "");
 	size_type UpdateExactLine(const CMessage& Format, const CString& sText = "");
 
-	size_type AddLine(const CString& sFormat, const CString& sText = "", const timeval* ts = nullptr, const MCString& mssTags = MCString::EmptyMap);
+	size_type AddLine(const CString& sFormat, const CString& sText = "", const timeval* ts = nullptr);
 	/// Same as AddLine, but replaces a line whose format string starts with sMatch if there is one.
 	size_type UpdateLine(const CString& sMatch, const CString& sFormat, const CString& sText = "");
 	/// Same as UpdateLine, but does nothing if this exact line already exists.
