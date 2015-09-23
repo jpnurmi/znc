@@ -16,6 +16,7 @@
 
 #include <znc/IRCNetwork.h>
 #include <znc/IRCSock.h>
+#include <znc/Message.h>
 #include <algorithm>
 
 static const struct {
@@ -212,38 +213,49 @@ public:
 		}
 	}
 
-	EModRet OnRaw(CString &sLine) override {
-		if (sLine.Token(0).Equals("AUTHENTICATE")) {
-			Authenticate(sLine.Token(1, true));
-		} else if (sLine.Token(1).Equals("903")) {
-			/* SASL success! */
-			GetNetwork()->GetIRCSock()->ResumeCap();
-			m_bAuthenticated = true;
-			DEBUG("sasl: Authenticated with mechanism [" << m_Mechanisms.GetCurrent() << "]");
-		} else if (sLine.Token(1).Equals("904") || sLine.Token(1).Equals("905")) {
-			DEBUG("sasl: Mechanism [" << m_Mechanisms.GetCurrent() << "] failed.");
-			PutModule(m_Mechanisms.GetCurrent() + " mechanism failed.");
-
-			if (m_Mechanisms.HasNext()) {
-				m_Mechanisms.IncrementIndex();
-				PutIRC("AUTHENTICATE " + m_Mechanisms.GetCurrent());
-			} else {
-				CheckRequireAuth();
-				GetNetwork()->GetIRCSock()->ResumeCap();
-			}
-		} else if (sLine.Token(1).Equals("906")) {
-			/* CAP wasn't paused? */
-			DEBUG("sasl: Reached 906.");
-			CheckRequireAuth();
-		} else if (sLine.Token(1).Equals("907")) {
-			m_bAuthenticated = true;
-			GetNetwork()->GetIRCSock()->ResumeCap();
-			DEBUG("sasl: Received 907 -- We are already registered");
-		} else {
-			return CONTINUE;
+	EModRet OnRawMessage(CMessage &Message) override {
+		if (Message.GetCommand().Equals("AUTHENTICATE")) {
+			Authenticate(Message.GetParams(0));
+			return HALT;
 		}
+		return CONTINUE;
+	}
 
-		return HALT;
+	EModRet OnNumericMessage(CNumericMessage& Message) override {
+		unsigned int uCode = Message.GetCode();
+		switch (uCode) {
+			case 903:
+				/* SASL success! */
+				GetNetwork()->GetIRCSock()->ResumeCap();
+				m_bAuthenticated = true;
+				DEBUG("sasl: Authenticated with mechanism [" << m_Mechanisms.GetCurrent() << "]");
+				return HALT;
+			case 904:
+			case 905:
+				DEBUG("sasl: Mechanism [" << m_Mechanisms.GetCurrent() << "] failed.");
+				PutModule(m_Mechanisms.GetCurrent() + " mechanism failed.");
+
+				if (m_Mechanisms.HasNext()) {
+					m_Mechanisms.IncrementIndex();
+					PutIRC("AUTHENTICATE " + m_Mechanisms.GetCurrent());
+				} else {
+					CheckRequireAuth();
+					GetNetwork()->GetIRCSock()->ResumeCap();
+				}
+				return HALT;
+			case 906:
+				/* CAP wasn't paused? */
+				DEBUG("sasl: Reached 906.");
+				CheckRequireAuth();
+				return HALT;
+			case 907:
+				m_bAuthenticated = true;
+				GetNetwork()->GetIRCSock()->ResumeCap();
+				DEBUG("sasl: Received 907 -- We are already registered");
+				return HALT;
+			default:
+				return CONTINUE;
+		}
 	}
 
 	void OnIRCConnected() override {
