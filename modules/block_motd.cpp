@@ -15,6 +15,7 @@
  */
 
 #include <znc/Modules.h>
+#include <znc/Message.h>
 
 class CBlockMotd : public CModule {
 public:
@@ -24,15 +25,15 @@ public:
 	virtual ~CBlockMotd() {
 	}
 
-	EModRet OnRaw(CString &sLine) override {
-		const CString sCmd = sLine.Token(1);
+	EModRet OnNumericMessage(CNumericMessage &Message) override {
+		unsigned int uCode = Message.GetCode();
 
-		if (sCmd == "375" /* begin of MOTD */
-				|| sCmd == "372" /* MOTD */)
+		if (uCode == 375 /* RPL_MOTDSTART */
+				|| uCode == 372 /* RPL_MOTD */)
 			return HALT;
-		if (sCmd == "376" /* End of MOTD */) {
-			sLine = sLine.Token(0) + " 422 " +
-				sLine.Token(2) + " :MOTD blocked by ZNC";
+		if (uCode == 376 /* RPL_ENDOFMOTD */) {
+			Message.SetCommand("422"); /* ERR_NOMOTD */
+			Message.SetParams({Message.GetParam(0), "MOTD blocked by ZNC"});
 		}
 		return CONTINUE;
 	}
