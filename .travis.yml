@@ -1,7 +1,4 @@
 language: cpp
-env:
-    global:
-        - secure: "i2f2UVDnyHT/9z0U3XvgTj8eDERvnc1Wk7HpseEjb75JwGzqn/2R+RKHmoSrwK3hFgij2IMxZL19XtHFwMz9t5A/huAAKD74KMMI/QpeZEJ/sjT3CTLcE9HEVDdJOjc7dfLRxb2hZtgvx8clZIMrpeUdPhci8openff30KvXVbg="
 matrix:
     include:
         - os: linux
@@ -27,8 +24,6 @@ before_install:
     - if [[ "$BUILD_TYPE" == "coverage" ]]; then export CFGFLAGS="--enable-debug --disable-perl --disable-python" MYCXXFLAGS=--coverage MYLDFLAGS=--coverage; fi
       # UBSan randomly crashes clang, and very often :(
       # CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=undefined -O1 -fPIE -fno-sanitize-recover" MYLDFLAGS="-fsanitize=undefined -pie -fno-sanitize-recover"
-    - if [[ "$TRAVIS_REPO_SLUG" == "znc/znc" && "$TRAVIS_PULL_REQUEST" == "false" && "$TRAVIS_BRANCH" == "master" ]]; then openssl aes-256-cbc -d -in .travis-github.enc -out ~/znc-docs-key -k ${SECRET_KEY}; fi
-    - export SECRET_KEY=no
 install:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cat /proc/cpuinfo /proc/meminfo; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then lsb_release -a; fi
@@ -68,13 +63,8 @@ script:
     - cat config.log
     - make V=1
     - make V=1 test
-    - sudo make install
-    - make test2
     - cd ..
 after_success:
-    - test -r .travis_after_all.py && python .travis_after_all.py || echo No .travis_after_all.py found
-    - test -r .to_export_back && echo $(cat .to_export_back) || echo No .to_export_back found
-    - export DUMMY_VAR=dummy-value $(cat .to_export_back)
     - |
           if [[ "$BUILD_TYPE" == "coverage" ]]; then
               cd build/
@@ -87,16 +77,9 @@ after_success:
           else
               echo "No coverage for this build"
           fi
-    - |
-          if [ "$BUILD_LEADER" == "YES" ] && [ "$BUILD_AGGREGATE_STATUS" == "others_succeeded" ] && [ "$TRAVIS_REPO_SLUG" == "znc/znc" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
-              echo "All builds passed!"
-              ./.travis-generate-docs.sh
-          else
-              echo "Not leader"
-          fi
 notifications:
     irc:
         channels:
-            - "irc.freenode.net#znc"
+            - "irc.freenode.net#znc-meh"
         on_success: always
         on_failure: always
