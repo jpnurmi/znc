@@ -40,6 +40,49 @@ static CString ZNC_DefaultCipher() {
 }
 #endif
 
+#ifdef HAVE_THREADED_DNS
+struct TDNSTask {
+	TDNSTask() : sHostname(""), iPort(0), sSockName(""), iTimeout(0), bSSL(false), sBindhost(""), pcSock(nullptr), bDoneTarget(false), bDoneBind(false), aiTarget(nullptr), aiBind(nullptr) {}
+
+	TDNSTask(const TDNSTask&) = delete;
+	TDNSTask& operator=(const TDNSTask&) = delete;
+
+	CString   sHostname;
+	u_short   iPort;
+	CString   sSockName;
+	int       iTimeout;
+	bool      bSSL;
+	CString   sBindhost;
+	CZNCSock* pcSock;
+
+	bool      bDoneTarget;
+	bool      bDoneBind;
+	addrinfo* aiTarget;
+	addrinfo* aiBind;
+};
+class CDNSJob : public CJob {
+public:
+	CDNSJob() : sHostname(""), task(nullptr), pManager(nullptr), bBind(false), iRes(0), aiResult(nullptr) {}
+
+	CDNSJob(const CDNSJob&) = delete;
+	CDNSJob& operator=(const CDNSJob&) = delete;
+
+	CString       sHostname;
+	TDNSTask*     task;
+	CSockManager* pManager;
+	bool          bBind;
+
+	int           iRes;
+	addrinfo*     aiResult;
+
+	void runThread() override;
+	void runMain() override;
+};
+static void StartTDNSThread(CSockManager* pManager, TDNSTask* task, bool bBind);
+static void SetTDNSThreadFinished(CSockManager* pManager, TDNSTask* task, bool bBind, addrinfo* aiResult);
+static void* TDNSThread(void* argument);
+#endif
+
 CZNCSock::CZNCSock(int timeout) : Csock(timeout), m_HostToVerifySSL(""), m_ssTrustedFingerprints(), m_ssCertVerificationErrors() {
 #ifdef HAVE_LIBSSL
 	DisableSSLCompression();
@@ -169,7 +212,7 @@ public:
 #endif
 
 #ifdef HAVE_THREADED_DNS
-void CSockManager::CDNSJob::runThread() {
+void CDNSJob::runThread() {
 	int iCount = 0;
 	while (true) {
 		addrinfo hints;
@@ -192,7 +235,7 @@ void CSockManager::CDNSJob::runThread() {
 	}
 }
 
-void CSockManager::CDNSJob::runMain() {
+void CDNSJob::runMain() {
 	if (0 != this->iRes) {
 		DEBUG("Error in threaded DNS: " << gai_strerror(this->iRes));
 		if (this->aiResult) {
@@ -200,16 +243,16 @@ void CSockManager::CDNSJob::runMain() {
 		}
 		this->aiResult = nullptr; // just for case. Maybe to call freeaddrinfo()?
 	}
-	pManager->SetTDNSThreadFinished(this->task, this->bBind, this->aiResult);
+	SetTDNSThreadFinished(pManager, this->task, this->bBind, this->aiResult);
 }
 
-void CSockManager::StartTDNSThread(TDNSTask* task, bool bBind) {
+void StartTDNSThread(CSockManager* pManager, TDNSTask* task, bool bBind) {
 	CString sHostname = bBind ? task->sBindhost : task->sHostname;
 	CDNSJob* arg = new CDNSJob;
 	arg->sHostname = sHostname;
 	arg->task      = task;
 	arg->bBind     = bBind;
-	arg->pManager  = this;
+	arg->pManager  = pManager;
 
 	CThreadPool::Get().addJob(arg);
 }
@@ -238,7 +281,7 @@ static std::tuple<CString, bool> RandomFrom2SetsWithBias(const SCString& ss4, co
 	return std::make_tuple(RandomFromSet(sSet, gen), bUseIPv6);
 }
 
-void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* aiResult) {
+void SetTDNSThreadFinished(CSockManager* pManager, TDNSTask* task, bool bBind, addrinfo* aiResult) {
 	if (bBind) {
 		task->aiBind = aiResult;
 		task->bDoneBind = true;
@@ -327,7 +370,7 @@ void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* a
 		}
 
 		DEBUG("TDNS: " << task->sSockName << ", connecting to [" << sTargetHost << "] using bindhost [" << sBindhost << "]");
-		FinishConnect(sTargetHost, task->iPort, task->sSockName, task->iTimeout, task->bSSL, sBindhost, task->pcSock);
+		pManager->FinishConnect(sTargetHost, task->iPort, task->sSockName, task->iTimeout, task->bSSL, sBindhost, task->pcSock);
 	} catch (const char* s) {
 		DEBUG(task->sSockName << ", dns resolving error: " << s);
 		task->pcSock->SetSockName(task->sSockName);
@@ -365,9 +408,9 @@ void CSockManager::Connect(const CString& sHostname, u_short iPort, const CStrin
 	if (sBindHost.empty()) {
 		task->bDoneBind = true;
 	} else {
-		StartTDNSThread(task, true);
+		StartTDNSThread(this, task, true);
 	}
-	StartTDNSThread(task, false);
+	StartTDNSThread(this, task, false);
 #else /* HAVE_THREADED_DNS */
 	// Just let Csocket handle DNS itself
 	FinishConnect(sHostname, iPort, sSockName, iTimeout, bSSL, sBindHost, pcSock);
