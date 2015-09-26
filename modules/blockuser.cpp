@@ -178,7 +178,7 @@ private:
 		vector<CClient*>::iterator it;
 		for (it = vpClients.begin(); it != vpClients.end(); ++it) {
 			(*it)->PutStatusNotice(MESSAGE);
-			(*it)->Close(CZNCSock::CLT_AFTERWRITE);
+			(*it)->GetSocket()->Close(CZNCSock::CLT_AFTERWRITE);
 		}
 
 		// Disconnect all networks from irc

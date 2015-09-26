@@ -90,7 +90,7 @@ protected:
 	CClient* m_pClient;
 };
 
-class CClient : public CZNCSock {
+class CClient : private CZNCSock {
 public:
 	CClient()
 			: CZNCSock(),
@@ -265,6 +265,13 @@ public:
 	const CIRCSock* GetIRCSock() const;
 	CIRCSock* GetIRCSock();
 	CString GetFullName() const;
+
+	// TODO
+	CZNCSock* GetSocket() { return this; }
+	const CZNCSock* GetSocket() const { return this; }
+	time_t GetTimeSinceLastDataTransaction() const { return CZNCSock::GetTimeSinceLastDataTransaction(); }
+	CString GetLocalIP() const { return CZNCSock::GetLocalIP(); }
+	CString GetRemoteIP() const override { return CZNCSock::GetRemoteIP(); }
 
 private:
 	void HandleCap(const CMessage& Message);

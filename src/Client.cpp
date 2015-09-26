@@ -309,7 +309,7 @@ void CClient::AuthUser() {
 }
 
 CClientAuth::CClientAuth(CClient* pClient, const CString& sUsername, const CString& sPassword)
-		: CAuthBase(sUsername, sPassword, pClient), m_pClient(pClient) {
+		: CAuthBase(sUsername, sPassword, pClient->GetSocket()), m_pClient(pClient) {
 }
 
 void CClientAuth::RefusedLogin(const CString& sReason) {

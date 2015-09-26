@@ -137,7 +137,7 @@ public:
 	}
 
 	void HandleShowCommand(const CString& sLine) {
-		const CString sPubKey = GetKey(GetClient());
+		const CString sPubKey = GetKey(GetClient()->GetSocket());
 
 		if (sPubKey.empty()) {
 			PutModule("You are not connected with any valid public key");
@@ -150,7 +150,7 @@ public:
 		CString sPubKey = sLine.Token(1);
 
 		if (sPubKey.empty()) {
-			sPubKey = GetKey(GetClient());
+			sPubKey = GetKey(GetClient()->GetSocket());
 		}
 
 		if (sPubKey.empty()) {
