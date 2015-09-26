@@ -476,7 +476,7 @@ bool CIRCSock::OnCTCPMessage(CCTCPMessage& Message) {
 bool CIRCSock::OnErrorMessage(CMessage& Message) {
 	//ERROR :Closing Link: nick[24.24.24.24] (Excess Flood)
 	CString sError = Message.GetParam(0);
-	m_pNetwork->PutStatus("Error from Server [" + sError + "]");
+	m_pNetwork->PutStatusNotice("Error from Server [" + sError + "]");
 	return true;
 }
 
@@ -679,7 +679,7 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
 		case 1: { // :irc.server.com 001 nick :Welcome to the Internet Relay Network nick
 			if (m_bAuthed && sServer == "irc.znc.in") {
 				// m_bAuthed == true => we already received another 001 => we might be in a traffic loop
-				m_pNetwork->PutStatus("ZNC seems to be connected to itself, disconnecting...");
+				m_pNetwork->PutStatusNotice("ZNC seems to be connected to itself, disconnecting...");
 				Quit();
 				return true;
 			}
@@ -689,7 +689,7 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
 			PutIRC("WHO " + sNick);
 
 			m_bAuthed = true;
-			m_pNetwork->PutStatus("Connected!");
+			m_pNetwork->PutStatusNotice("Connected!");
 
 			const vector<CClient*>& vClients = m_pNetwork->GetClients();
 
@@ -721,9 +721,9 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
 			CString sHost = Message.GetParam(1);
 			CString sPort = Message.GetParam(2);
 			CString sInfo = Message.GetParam(3);
-			m_pNetwork->PutStatus("Server [" + m_pNetwork->GetCurrentServer()->GetString(false) +
+			m_pNetwork->PutStatusNotice("Server [" + m_pNetwork->GetCurrentServer()->GetString(false) +
 					"] redirects us to [" + sHost + ":" + sPort + "] with reason [" + sInfo + "]");
-			m_pNetwork->PutStatus("Perhaps you want to add it as a new server.");
+			m_pNetwork->PutStatusNotice("Perhaps you want to add it as a new server.");
 			// Don't send server redirects to the client
 			return true;
 		}
@@ -947,7 +947,7 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
 			}
 			if (pChan) {
 				pChan->Disable();
-				m_pNetwork->PutStatus("Channel [" + pChan->GetName() + "] is linked to "
+				m_pNetwork->PutStatusNotice("Channel [" + pChan->GetName() + "] is linked to "
 						"another channel and was thus disabled.");
 			}
 			break;
@@ -958,7 +958,7 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
 
 			if (!GetSSL()) {
 				StartTLS();
-				m_pNetwork->PutStatus("Switched to SSL (STARTTLS)");
+				m_pNetwork->PutStatusNotice("Switched to SSL (STARTTLS)");
 			}
 
 			return true;
@@ -1012,7 +1012,7 @@ bool CIRCSock::OnQuitMessage(CQuitMessage& Message) {
 	bool bIsVisible = false;
 
 	if (Nick.NickEquals(GetNick())) {
-		m_pNetwork->PutStatus("You quit [" + Message.GetReason() + "]");
+		m_pNetwork->PutStatusNotice("You quit [" + Message.GetReason() + "]");
 		// We don't call module hooks and we don't
 		// forward this quit to clients (Some clients
 		// disconnect if they receive such a QUIT)
@@ -1185,7 +1185,7 @@ void CIRCSock::Disconnected() {
 	DEBUG(GetSockName() << " == Disconnected()");
 	if (!m_pNetwork->GetUser()->IsBeingDeleted() && m_pNetwork->GetIRCConnectEnabled() &&
 			m_pNetwork->GetServers().size() != 0) {
-		m_pNetwork->PutStatus("Disconnected from IRC. Reconnecting...");
+		m_pNetwork->PutStatusNotice("Disconnected from IRC. Reconnecting...");
 	}
 	m_pNetwork->ClearRawBuffer();
 	m_pNetwork->ClearMotdBuffer();
@@ -1222,9 +1222,9 @@ void CIRCSock::SockError(int iErrno, const CString& sDescription) {
 			<< sError << ")");
 	if (!m_pNetwork->GetUser()->IsBeingDeleted()) {
 		if (GetConState() != CST_OK) {
-			m_pNetwork->PutStatus("Cannot connect to IRC (" + sError + "). Retrying...");
+			m_pNetwork->PutStatusNotice("Cannot connect to IRC (" + sError + "). Retrying...");
 		} else {
-			m_pNetwork->PutStatus("Disconnected from IRC (" + sError + "). Reconnecting...");
+			m_pNetwork->PutStatusNotice("Disconnected from IRC (" + sError + "). Reconnecting...");
 		}
 #ifdef HAVE_LIBSSL
 		if (iErrno == errnoBadSSLCert) {
@@ -1265,7 +1265,7 @@ void CIRCSock::SockError(int iErrno, const CString& sDescription) {
 void CIRCSock::Timeout() {
 	DEBUG(GetSockName() << " == Timeout()");
 	if (!m_pNetwork->GetUser()->IsBeingDeleted()) {
-		m_pNetwork->PutStatus("IRC connection timed out.  Reconnecting...");
+		m_pNetwork->PutStatusNotice("IRC connection timed out.  Reconnecting...");
 	}
 	m_pNetwork->ClearRawBuffer();
 	m_pNetwork->ClearMotdBuffer();
@@ -1277,7 +1277,7 @@ void CIRCSock::Timeout() {
 void CIRCSock::ConnectionRefused() {
 	DEBUG(GetSockName() << " == ConnectionRefused()");
 	if (!m_pNetwork->GetUser()->IsBeingDeleted()) {
-		m_pNetwork->PutStatus("Connection Refused.  Reconnecting...");
+		m_pNetwork->PutStatusNotice("Connection Refused.  Reconnecting...");
 	}
 	m_pNetwork->ClearRawBuffer();
 	m_pNetwork->ClearMotdBuffer();
@@ -1285,7 +1285,7 @@ void CIRCSock::ConnectionRefused() {
 
 void CIRCSock::ReachedMaxBuffer() {
 	DEBUG(GetSockName() << " == ReachedMaxBuffer()");
-	m_pNetwork->PutStatus("Received a too long line from the IRC server!");
+	m_pNetwork->PutStatusNotice("Received a too long line from the IRC server!");
 	Quit();
 }
 
