@@ -22,6 +22,7 @@
 #include <znc/Modules.h>
 #include <znc/Socket.h>
 #include <znc/Listener.h>
+#include <znc/SocketManager.h>
 #include <map>
 #include <list>
 
