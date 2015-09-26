@@ -39,7 +39,7 @@ CString ZNC_DefaultCipher() {
 }
 #endif
 
-CZNCSock::CZNCSock(int timeout) : Csock(timeout), m_HostToVerifySSL(""), m_ssTrustedFingerprints(), m_ssCertVerificationErrors() {
+CZNCSock::CZNCSock(int timeout) : Csock(timeout), m_bAllowIRCControlCodes(false), m_HostToVerifySSL(""), m_ssTrustedFingerprints(), m_ssCertVerificationErrors() {
 #ifdef HAVE_LIBSSL
 	DisableSSLCompression();
 	FollowSSLCipherServerPreference();
@@ -52,7 +52,7 @@ CZNCSock::CZNCSock(int timeout) : Csock(timeout), m_HostToVerifySSL(""), m_ssTru
 #endif
 }
 
-CZNCSock::CZNCSock(const CString& sHost, u_short port, int timeout) : Csock(sHost, port, timeout), m_HostToVerifySSL(""), m_ssTrustedFingerprints(), m_ssCertVerificationErrors() {
+CZNCSock::CZNCSock(const CString& sHost, u_short port, int timeout) : Csock(sHost, port, timeout), m_bAllowIRCControlCodes(false), m_HostToVerifySSL(""), m_ssTrustedFingerprints(), m_ssCertVerificationErrors() {
 #ifdef HAVE_LIBSSL
 	DisableSSLCompression();
 	FollowSSLCipherServerPreference();
@@ -240,51 +240,55 @@ CModule* CSocket::GetModule() const { return m_pModule; }
 /////////////////// !CSocket ///////////////////
 
 #ifdef HAVE_ICU
-void CIRCSocket::IcuExtToUCallback(
+void CZNCSock::IcuExtToUCallback(
 		UConverterToUnicodeArgs* toArgs,
 		const char* codeUnits,
 		int32_t length,
 		UConverterCallbackReason reason,
 		UErrorCode* err) {
-	// From http://www.mirc.com/colors.html
-	// The Control+O key combination in mIRC inserts ascii character 15,
-	// which turns off all previous attributes, including color, bold, underline, and italics.
-	//
-	// \x02 bold
-	// \x03 mIRC-compatible color
-	// \x04 RRGGBB color
-	// \x0F normal/reset (turn off bold, colors, etc.)
-	// \x12 reverse (weechat)
-	// \x16 reverse (mirc, kvirc)
-	// \x1D italic
-	// \x1F underline
-	// Also see http://www.visualirc.net/tech-attrs.php
-	//
-	// Keep in sync with CUser::AddTimestamp and CIRCSocket::IcuExtFromUCallback
-	static const std::set<char> scAllowedChars = {'\x02', '\x03', '\x04', '\x0F', '\x12', '\x16', '\x1D', '\x1F'};
-	if (reason == UCNV_ILLEGAL && length == 1 && scAllowedChars.count(*codeUnits)) {
-		*err = U_ZERO_ERROR;
-		UChar c = *codeUnits;
-		ucnv_cbToUWriteUChars(toArgs, &c, 1, 0, err);
-		return;
+	if (m_bAllowIRCControlCodes) {
+		// From http://www.mirc.com/colors.html
+		// The Control+O key combination in mIRC inserts ascii character 15,
+		// which turns off all previous attributes, including color, bold, underline, and italics.
+		//
+		// \x02 bold
+		// \x03 mIRC-compatible color
+		// \x04 RRGGBB color
+		// \x0F normal/reset (turn off bold, colors, etc.)
+		// \x12 reverse (weechat)
+		// \x16 reverse (mirc, kvirc)
+		// \x1D italic
+		// \x1F underline
+		// Also see http://www.visualirc.net/tech-attrs.php
+		//
+		// Keep in sync with CUser::AddTimestamp and CZNCSock::IcuExtFromUCallback
+		static const std::set<char> scAllowedChars = {'\x02', '\x03', '\x04', '\x0F', '\x12', '\x16', '\x1D', '\x1F'};
+		if (reason == UCNV_ILLEGAL && length == 1 && scAllowedChars.count(*codeUnits)) {
+			*err = U_ZERO_ERROR;
+			UChar c = *codeUnits;
+			ucnv_cbToUWriteUChars(toArgs, &c, 1, 0, err);
+			return;
+		}
 	}
 	Csock::IcuExtToUCallback(toArgs, codeUnits, length, reason, err);
 }
 
-void CIRCSocket::IcuExtFromUCallback(
+void CZNCSock::IcuExtFromUCallback(
 		UConverterFromUnicodeArgs* fromArgs,
 		const UChar* codeUnits,
 		int32_t length,
 		UChar32 codePoint,
 		UConverterCallbackReason reason,
 		UErrorCode* err) {
-	// See comment in CIRCSocket::IcuExtToUCallback
-	static const std::set<UChar32> scAllowedChars = {0x02, 0x03, 0x04, 0x0F, 0x12, 0x16, 0x1D, 0x1F};
-	if (reason == UCNV_ILLEGAL && scAllowedChars.count(codePoint)) {
-		*err = U_ZERO_ERROR;
-		char c = codePoint;
-		ucnv_cbFromUWriteBytes(fromArgs, &c, 1, 0, err);
-		return;
+	if (m_bAllowIRCControlCodes) {
+		// See comment in CZNCSock::IcuExtToUCallback
+		static const std::set<UChar32> scAllowedChars = {0x02, 0x03, 0x04, 0x0F, 0x12, 0x16, 0x1D, 0x1F};
+		if (reason == UCNV_ILLEGAL && scAllowedChars.count(codePoint)) {
+			*err = U_ZERO_ERROR;
+			char c = codePoint;
+			ucnv_cbFromUWriteBytes(fromArgs, &c, 1, 0, err);
+			return;
+		}
 	}
 	Csock::IcuExtFromUCallback(fromArgs, codeUnits, length, codePoint, reason, err);
 }

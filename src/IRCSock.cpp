@@ -57,7 +57,7 @@ bool CIRCSock::IsFloodProtected(double fRate) {
 }
 
 CIRCSock::CIRCSock(CIRCNetwork* pNetwork)
-		: CIRCSocket(),
+		: CZNCSock(),
 		  m_bAuthed(false),
 		  m_bNamesx(false),
 		  m_bUHNames(false),
@@ -87,6 +87,8 @@ CIRCSock::CIRCSock(CIRCNetwork* pNetwork)
 		  m_bFloodProtection(IsFloodProtected(pNetwork->GetFloodRate()))
 {
 	EnableReadLine();
+	SetAllowIRCControlCodes(true);
+
 	m_Nick.SetIdent(m_pNetwork->GetIdent());
 	m_Nick.SetHost(m_pNetwork->GetBindHost());
 	SetEncoding(m_pNetwork->GetEncoding());

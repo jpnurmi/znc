@@ -90,10 +90,10 @@ protected:
 	CClient* m_pClient;
 };
 
-class CClient : public CIRCSocket {
+class CClient : public CZNCSock {
 public:
 	CClient()
-			: CIRCSocket(),
+			: CZNCSock(),
 			  m_bGotPass(false),
 			  m_bGotNick(false),
 			  m_bGotUser(false),
@@ -131,6 +131,7 @@ public:
 			              })
 	{
 		EnableReadLine();
+		SetAllowIRCControlCodes(true);
 		// RFC says a line can have 512 chars max, but we are
 		// a little more gentle ;)
 		SetMaxBufferThreshold(1024);

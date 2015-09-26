@@ -44,6 +44,36 @@ public:
 #endif
 	virtual CString GetRemoteIP() const { return Csock::GetRemoteIP(); }
 
+	/// @brief For client<->ZNC, and ZNC<->server IRC sockets
+	bool GetAllowIRCControlCodes() const { return m_bAllowIRCControlCodes; }
+	void SetAllowIRCControlCodes(bool bAllow) { m_bAllowIRCControlCodes = bAllow; }
+
+#ifdef HAVE_ICU
+	/**
+	 * @brief Allow IRC control characters to appear even if protocol encoding explicitly disallows them.
+	 *
+	 * E.g. ISO-2022-JP disallows 0x0F, which in IRC means "reset format",
+	 * so by default it gets replaced with U+FFFD ("replacement character").
+	 * https://code.google.com/p/chromium/issues/detail?id=277062#c3
+	 *
+	 * In case if protocol encoding uses these code points for something else, the encoding takes preference,
+	 * and they are not IRC control characters anymore.
+	 */
+	void IcuExtToUCallback(
+		UConverterToUnicodeArgs* toArgs,
+		const char* codeUnits,
+		int32_t length,
+		UConverterCallbackReason reason,
+		UErrorCode* err) override;
+	void IcuExtFromUCallback(
+		UConverterFromUnicodeArgs* fromArgs,
+		const UChar* codeUnits,
+		int32_t length,
+		UChar32 codePoint,
+		UConverterCallbackReason reason,
+		UErrorCode* err) override;
+#endif
+
 protected:
 	// All existing errno codes seem to be in range 1-300
 	enum {
@@ -51,6 +81,7 @@ protected:
 	};
 
 private:
+	bool m_bAllowIRCControlCodes;
 	CString m_HostToVerifySSL;
 	SCString m_ssTrustedFingerprints;
 	SCString m_ssCertVerificationErrors;
@@ -112,39 +143,6 @@ public:
 
 private:
 	CModule*  m_pModule; //!< pointer to the module that this sock instance belongs to
-};
-
-/**
- * @class CIRCSocket
- * @brief Base IRC socket for client<->ZNC, and ZNC<->server
- */
-class CIRCSocket : public CZNCSock {
-public:
-#ifdef HAVE_ICU
-	/**
-	 * @brief Allow IRC control characters to appear even if protocol encoding explicitly disallows them.
-	 *
-	 * E.g. ISO-2022-JP disallows 0x0F, which in IRC means "reset format",
-	 * so by default it gets replaced with U+FFFD ("replacement character").
-	 * https://code.google.com/p/chromium/issues/detail?id=277062#c3
-	 *
-	 * In case if protocol encoding uses these code points for something else, the encoding takes preference,
-	 * and they are not IRC control characters anymore.
-	 */
-	void IcuExtToUCallback(
-		UConverterToUnicodeArgs* toArgs,
-		const char* codeUnits,
-		int32_t length,
-		UConverterCallbackReason reason,
-		UErrorCode* err) override;
-	void IcuExtFromUCallback(
-		UConverterFromUnicodeArgs* fromArgs,
-		const UChar* codeUnits,
-		int32_t length,
-		UChar32 codePoint,
-		UConverterCallbackReason reason,
-		UErrorCode* err) override;
-#endif
 };
 
 #endif /* ZNC_SOCKET_H */
