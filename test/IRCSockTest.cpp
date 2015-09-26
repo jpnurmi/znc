@@ -144,7 +144,7 @@ TEST_F(IRCSockTest, OnErrorMessage) {
 	m_pTestSock->ReadLine(msg.ToString());
 
 	EXPECT_THAT(m_pTestModule->vsHooks, IsEmpty()); // no OnErrorMessage() hook (yet?)
-	EXPECT_THAT(m_pTestClient->vsLines, ElementsAre(":*status!znc@znc.in PRIVMSG me :Error from Server [foo bar]"));
+	EXPECT_THAT(m_pTestClient->vsLines, ElementsAre(":*status!znc@znc.in NOTICE me :Error from Server [foo bar]"));
 }
 
 TEST_F(IRCSockTest, OnInviteMessage) {
