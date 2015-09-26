@@ -62,26 +62,6 @@ enum EAddrType {
 	ADDR_ALL
 };
 
-class CSockManager : public TSocketManager<CZNCSock> {
-public:
-	CSockManager();
-	virtual ~CSockManager();
-
-	bool ListenHost(u_short iPort, const CString& sSockName, const CString& sBindHost, bool bSSL = false, int iMaxConns = SOMAXCONN, CZNCSock *pcSock = nullptr, u_int iTimeout = 0, EAddrType eAddr = ADDR_ALL);
-	bool ListenAll(u_short iPort, const CString& sSockName, bool bSSL = false, int iMaxConns = SOMAXCONN, CZNCSock *pcSock = nullptr, u_int iTimeout = 0, EAddrType eAddr = ADDR_ALL);
-	u_short ListenRand(const CString& sSockName, const CString& sBindHost, bool bSSL = false, int iMaxConns = SOMAXCONN, CZNCSock *pcSock = nullptr, u_int iTimeout = 0, EAddrType eAddr = ADDR_ALL);
-	u_short ListenAllRand(const CString& sSockName, bool bSSL = false, int iMaxConns = SOMAXCONN, CZNCSock *pcSock = nullptr, u_int iTimeout = 0, EAddrType eAddr = ADDR_ALL);
-
-	void Connect(const CString& sHostname, u_short iPort, const CString& sSockName, int iTimeout = 60, bool bSSL = false, const CString& sBindHost = "", CZNCSock *pcSock = nullptr);
-	void FinishConnect(const CString& sHostname, u_short iPort, const CString& sSockName, int iTimeout, bool bSSL, const CString& sBindHost, CZNCSock *pcSock);
-
-	unsigned int GetAnonConnectionCount(const CString &sIP) const;
-
-private:
-	class CTDNSMonitorFD;
-	friend class CTDNSMonitorFD;
-};
-
 /**
  * @class CSocket
  * @brief Base Csock implementation to be used by modules
