@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <znc/Modules.h>
 #include <znc/znc.h>
 #include <znc/User.h>
 #include <znc/FileUtils.h>

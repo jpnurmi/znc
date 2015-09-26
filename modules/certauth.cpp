@@ -16,6 +16,7 @@
 
 #define REQUIRESSL
 
+#include <znc/Modules.h>
 #include <znc/User.h>
 #include <znc/znc.h>
 

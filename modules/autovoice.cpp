@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include <znc/IRCNetwork.h>
 #include <znc/Modules.h>
+#include <znc/IRCNetwork.h>
 #include <znc/Chan.h>
 
 using std::map;

@@ -33,6 +33,7 @@
 //       It is strongly suggested that you enable SSL between znc and your client otherwise the encryption stops at znc and gets sent to your client in plain text.
 //
 
+#include <znc/Modules.h>
 #include <znc/Chan.h>
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>

@@ -26,11 +26,11 @@
 
 #define REQUIRESSL
 
+#include <znc/Modules.h>
 #include <znc/main.h>
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 #include <znc/FileUtils.h>
-#include <znc/Modules.h>
 #include <znc/Chan.h>
 
 using std::vector;

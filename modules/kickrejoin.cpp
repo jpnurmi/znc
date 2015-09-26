@@ -22,6 +22,7 @@
  *
  */
 
+#include <znc/Modules.h>
 #include <znc/Chan.h>
 #include <znc/IRCNetwork.h>
 
