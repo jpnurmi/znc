@@ -129,8 +129,8 @@ public:
 	// Getters
 	CModule* GetModule() const;
 	// !Getters
+
 private:
-protected:
 	CModule*  m_pModule; //!< pointer to the module that this sock instance belongs to
 };
 

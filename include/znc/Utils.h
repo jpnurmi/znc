@@ -91,9 +91,6 @@ public:
 	static MCString GetMessageTags(const CString& sLine);
 	/// @deprecated Use CMessage instead
 	static void SetMessageTags(CString& sLine, const MCString& mssTags);
-
-private:
-protected:
 };
 
 class CException {
@@ -108,8 +105,8 @@ public:
 	virtual ~CException() {}
 
 	EType GetType() const { return m_eType; }
+
 private:
-protected:
 	EType  m_eType;
 };
 
@@ -180,11 +177,11 @@ public:
 
 	/// @return True if this table doesn't contain any rows.
 	using std::vector<std::vector<CString> >::empty;
+
 private:
 	unsigned int GetColumnIndex(const CString& sName) const;
 	VCString Render() const;
 
-protected:
 	// TODO: cleanup these fields before 1.7.0 (I don't want to break ABI)
 	VCString m_vsHeaders;
 	mutable VCString m_vsOutput;  // Rendered table

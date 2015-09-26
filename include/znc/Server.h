@@ -31,8 +31,8 @@ public:
 	bool IsSSL() const;
 	CString GetString(bool bIncludePassword = true) const;
 	static bool IsValidHostName(const CString& sHostName);
+
 private:
-protected:
 	CString         m_sName;
 	unsigned short  m_uPort;
 	CString         m_sPass;

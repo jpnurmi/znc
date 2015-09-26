@@ -1213,7 +1213,7 @@ public:
 	virtual void OnGetAvailableMods(std::set<CModInfo>& ssMods, CModInfo::EModuleType eType);
 	// !Global Modules
 
-protected:
+private:
 	CModInfo::EModuleType m_eType;
 	CString            m_sDescription;
 	std::set<CTimer*>  m_sTimers;
@@ -1231,7 +1231,6 @@ protected:
 	CString            m_sSavePath;
 	CString            m_sArgs;
 	CString            m_sModPath;
-private:
 	MCString           m_mssRegistry; //!< way to save name/value pairs. Note there is no encryption involved in this
 	VWebSubPages       m_vSubPages;
 	std::map<CString, CModCommand> m_mCommands;
@@ -1410,7 +1409,6 @@ private:
 	static ModHandle OpenModule(const CString& sModule, const CString& sModPath,
 			bool &bVersionMismatch, CModInfo& Info, CString& sRetMsg);
 
-protected:
 	CUser*        m_pUser;
 	CIRCNetwork*  m_pNetwork;
 	CClient*      m_pClient;
