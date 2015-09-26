@@ -17,6 +17,7 @@
 #include <znc/znc.h>
 #include <znc/User.h>
 #include <znc/FileUtils.h>
+#include <znc/Socket.h>
 
 using std::set;
 
@@ -206,7 +207,7 @@ public:
 				Table.SetCell("Type", "Getting");
 			}
 
-			if (pSock->GetType() == Csock::LISTENER) {
+			if (pSock->GetType() == CZNCSock::LISTENER) {
 				Table.SetCell("State", "Waiting");
 			} else {
 				Table.SetCell("State", CString::ToPercent(pSock->GetProgress()));

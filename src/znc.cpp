@@ -62,7 +62,7 @@ CZNC::CZNC()
 		  m_uiConnectDelay(5),
 		  m_uiAnonIPLimit(10),
 		  m_uiMaxBufferSize(500),
-		  m_uDisabledSSLProtocols(Csock::EDP_SSL),
+		  m_uDisabledSSLProtocols(CZNCSock::EDP_SSL),
 		  m_pModules(new CModules),
 		  m_uBytesRead(0),
 		  m_uBytesWritten(0),
@@ -1902,7 +1902,7 @@ bool CZNC::SetSSLProtocols(const CString& sProtocols)
 	VCString vsProtocols;
 	sProtocols.Split(" ", vsProtocols, false, "", "", true, true);
 
-	unsigned int uDisabledProtocols = Csock::EDP_SSL;
+	unsigned int uDisabledProtocols = CZNCSock::EDP_SSL;
 	for (CString& sProtocol : vsProtocols) {
 		unsigned int uFlag = 0;
 		bool bEnable = sProtocol.TrimPrefix("+");
@@ -1912,15 +1912,15 @@ bool CZNC::SetSSLProtocols(const CString& sProtocols)
 		if (sProtocol.Equals("All")) {
 			uFlag = ~0;
 		} else if (sProtocol.Equals("SSLv2")) {
-			uFlag = Csock::EDP_SSLv2;
+			uFlag = CZNCSock::EDP_SSLv2;
 		} else if (sProtocol.Equals("SSLv3")) {
-			uFlag = Csock::EDP_SSLv3;
+			uFlag = CZNCSock::EDP_SSLv3;
 		} else if (sProtocol.Equals("TLSv1")) {
-			uFlag = Csock::EDP_TLSv1;
+			uFlag = CZNCSock::EDP_TLSv1;
 		} else if (sProtocol.Equals("TLSv1.1")) {
-			uFlag = Csock::EDP_TLSv1_1;
+			uFlag = CZNCSock::EDP_TLSv1_1;
 		} else if (sProtocol.Equals("TLSv1.2")) {
-			uFlag = Csock::EDP_TLSv1_2;
+			uFlag = CZNCSock::EDP_TLSv1_2;
 		} else {
 			return false;
 		}

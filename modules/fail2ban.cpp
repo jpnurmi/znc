@@ -15,6 +15,7 @@
  */
 
 #include <znc/znc.h>
+#include <znc/Socket.h>
 
 class CFailToBanMod : public CModule {
 public:
@@ -166,7 +167,7 @@ public:
 		Add(sHost, *pCount);
 
 		pClient->Write("ERROR :Closing link [Please try again later - reconnecting too fast]\r\n");
-		pClient->Close(Csock::CLT_AFTERWRITE);
+		pClient->Close(CZNCSock::CLT_AFTERWRITE);
 	}
 
 	void OnFailedLogin(const CString& sUsername, const CString& sRemoteIP) override {
