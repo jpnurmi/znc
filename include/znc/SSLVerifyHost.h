@@ -17,10 +17,12 @@
 #ifndef ZNC_SSLVERIFYHOST_H
 #define ZNC_SSLVERIFYHOST_H
 
+#include <znc/zncconfig.h>
+#include <znc/ZNCString.h>
+
 #ifdef HAVE_LIBSSL
 
-#include <znc/Csocket.h>
-#include <znc/ZNCString.h>
+#include <openssl/ssl.h>
 
 bool ZNC_SSLVerifyHost(const CString& sHost, const X509* pCert, CString& sError);
 

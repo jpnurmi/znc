@@ -15,6 +15,8 @@
  */
 
 #include <znc/SSLVerifyHost.h>
+#include <znc/ZNCDebug.h>
+#include <znc/Csocket.h>
 
 #ifdef HAVE_LIBSSL
 
