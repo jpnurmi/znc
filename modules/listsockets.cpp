@@ -16,6 +16,7 @@
 
 #include <znc/User.h>
 #include <znc/znc.h>
+#include <znc/Socket.h>
 
 class CSocketSorter {
 public:
@@ -29,9 +30,9 @@ public:
 
 		// Listeners go to the top
 		if (m_pSock->GetType() != other.m_pSock->GetType()) {
-			if (m_pSock->GetType() == Csock::LISTENER)
+			if (m_pSock->GetType() == CZNCSock::LISTENER)
 				return false;
-			if (other.m_pSock->GetType() == Csock::LISTENER)
+			if (other.m_pSock->GetType() == CZNCSock::LISTENER)
 				return true;
 		}
 		const CString& sMyName = m_pSock->GetSockName();
@@ -91,7 +92,7 @@ public:
 			// another socket took over the connection from this
 			// socket. So ignore this to avoid listing the
 			// connection twice.
-			if (pSock->GetCloseType() == Csock::CLT_DEREFERENCE)
+			if (pSock->GetCloseType() == CZNCSock::CLT_DEREFERENCE)
 				continue;
 			ret.push(pSock);
 		}
@@ -143,11 +144,11 @@ public:
 
 	CString GetSocketState(Csock* pSocket) {
 		switch (pSocket->GetType()) {
-			case Csock::LISTENER:
+			case CZNCSock::LISTENER:
 				return "Listener";
-			case Csock::INBOUND:
+			case CZNCSock::INBOUND:
 				return "Inbound";
-			case Csock::OUTBOUND:
+			case CZNCSock::OUTBOUND:
 				if (pSocket->IsConnected())
 					return "Outbound";
 				else
@@ -191,7 +192,7 @@ public:
 		}
 
 		// While connecting, GetRemotePort() would return 0
-		if (pSocket->GetType() == Csock::OUTBOUND) {
+		if (pSocket->GetType() == CZNCSock::OUTBOUND) {
 			uPort = pSocket->GetPort();
 		} else {
 			uPort = pSocket->GetRemotePort();

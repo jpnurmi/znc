@@ -292,7 +292,7 @@ void CHTTPSock::PrintPage(const CString& sPage) {
 				}
 			} while(zStatus == Z_OK);
 
-			Close(Csock::CLT_AFTERWRITE);
+			Close(CZNCSock::CLT_AFTERWRITE);
 			deflateEnd(&zStrm);
 			return;
 		}
@@ -306,7 +306,7 @@ void CHTTPSock::PrintPage(const CString& sPage) {
 	}
 
 	Write(sPage);
-	Close(Csock::CLT_AFTERWRITE);
+	Close(CZNCSock::CLT_AFTERWRITE);
 }
 
 bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
@@ -402,7 +402,7 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 
 	DEBUG("- ETag: [" << sETag << "] / If-None-Match [" << m_sIfNoneMatch << "]");
 
-	Close(Csock::CLT_AFTERWRITE);
+	Close(CZNCSock::CLT_AFTERWRITE);
 
 	return true;
 }
@@ -660,7 +660,7 @@ bool CHTTPSock::PrintErrorPage(unsigned int uStatusId, const CString& sStatusMsg
 
 	PrintHeader(sPage.length(), "text/html; charset=utf-8", uStatusId, sStatusMsg);
 	Write(sPage);
-	Close(Csock::CLT_AFTERWRITE);
+	Close(CZNCSock::CLT_AFTERWRITE);
 
 	return true;
 }

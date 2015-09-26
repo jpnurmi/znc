@@ -16,6 +16,7 @@
 
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
+#include <znc/Socket.h>
 
 using std::vector;
 
@@ -176,7 +177,7 @@ private:
 		vector<CClient*>::iterator it;
 		for (it = vpClients.begin(); it != vpClients.end(); ++it) {
 			(*it)->PutStatusNotice(MESSAGE);
-			(*it)->Close(Csock::CLT_AFTERWRITE);
+			(*it)->Close(CZNCSock::CLT_AFTERWRITE);
 		}
 
 		// Disconnect all networks from irc

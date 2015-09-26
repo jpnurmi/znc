@@ -357,7 +357,7 @@ void CAuthBase::RefuseLogin(const CString& sReason) {
 void CClient::RefuseLogin(const CString& sReason) {
 	PutStatus("Bad username and/or password.");
 	PutClient(":irc.znc.in 464 " + GetNick() + " :" + sReason);
-	Close(Csock::CLT_AFTERWRITE);
+	Close(CZNCSock::CLT_AFTERWRITE);
 }
 
 void CClientAuth::AcceptedLogin(CUser& User) {
@@ -437,7 +437,7 @@ void CClient::ReachedMaxBuffer() {
 
 void CClient::BouncedOff() {
 	PutStatusNotice("You are being disconnected because another user just authenticated as you.");
-	Close(Csock::CLT_AFTERWRITE);
+	Close(CZNCSock::CLT_AFTERWRITE);
 }
 
 void CClient::PutIRC(const CString& sLine) {
@@ -1116,7 +1116,7 @@ bool CClient::OnQuitMessage(CQuitMessage& Message)
 	bool bReturn = false;
 	NETWORKMODULECALL(OnUserQuitMessage(Message), m_pUser, m_pNetwork, this, &bReturn);
 	if (!bReturn) {
-		Close(Csock::CLT_AFTERWRITE); // Treat a client quit as a detach
+		Close(CZNCSock::CLT_AFTERWRITE); // Treat a client quit as a detach
 	}
 	// Don't forward this msg.  We don't want the client getting us disconnected.
 	return true;

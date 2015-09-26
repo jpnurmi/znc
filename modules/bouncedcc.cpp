@@ -16,6 +16,7 @@
 
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
+#include <znc/Socket.h>
 
 using std::set;
 
@@ -356,16 +357,16 @@ void CDCCBounce::Timeout() {
 	CString sType = (m_bIsChat) ? "Chat" : "Xfer";
 
 	if (IsRemote()) {
-		CString sHost = Csock::GetHostName();
+		CString sHost = CZNCSock::GetHostName();
 		if (!sHost.empty()) {
-			sHost = " to [" + sHost + " " + CString(Csock::GetPort()) + "]";
+			sHost = " to [" + sHost + " " + CString(CZNCSock::GetPort()) + "]";
 		} else {
 			sHost = ".";
 		}
 
 		m_pModule->PutModule("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Timeout while connecting" + sHost);
 	} else {
-		m_pModule->PutModule("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Timeout waiting for incoming connection [" + Csock::GetLocalIP() + ":" + CString(Csock::GetLocalPort()) + "]");
+		m_pModule->PutModule("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Timeout waiting for incoming connection [" + CZNCSock::GetLocalIP() + ":" + CString(CZNCSock::GetLocalPort()) + "]");
 	}
 }
 
@@ -373,9 +374,9 @@ void CDCCBounce::ConnectionRefused() {
 	DEBUG(GetSockName() << " == ConnectionRefused()");
 
 	CString sType = (m_bIsChat) ? "Chat" : "Xfer";
-	CString sHost = Csock::GetHostName();
+	CString sHost = CZNCSock::GetHostName();
 	if (!sHost.empty()) {
-		sHost = " to [" + sHost + " " + CString(Csock::GetPort()) + "]";
+		sHost = " to [" + sHost + " " + CString(CZNCSock::GetPort()) + "]";
 	} else {
 		sHost = ".";
 	}
@@ -388,14 +389,14 @@ void CDCCBounce::SockError(int iErrno, const CString& sDescription) {
 	CString sType = (m_bIsChat) ? "Chat" : "Xfer";
 
 	if (IsRemote()) {
-		CString sHost = Csock::GetHostName();
+		CString sHost = CZNCSock::GetHostName();
 		if (!sHost.empty()) {
-			sHost = "[" + sHost + " " + CString(Csock::GetPort()) + "]";
+			sHost = "[" + sHost + " " + CString(CZNCSock::GetPort()) + "]";
 		}
 
 		m_pModule->PutModule("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Socket error [" + sDescription + "]" + sHost);
 	} else {
-		m_pModule->PutModule("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Socket error [" + sDescription + "] [" + Csock::GetLocalIP() + ":" + CString(Csock::GetLocalPort()) + "]");
+		m_pModule->PutModule("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Socket error [" + sDescription + "] [" + CZNCSock::GetLocalIP() + ":" + CString(CZNCSock::GetLocalPort()) + "]");
 	}
 }
 

@@ -24,6 +24,7 @@
 #include <znc/FileUtils.h>
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
+#include <znc/Socket.h>
 
 using std::pair;
 using std::stringstream;
@@ -276,8 +277,8 @@ public:
 					Table.SetCell("Created", sTime);
 				}
 
-				if (pSock->GetType() != Csock::LISTENER) {
-					if (pSock->GetType() == Csock::OUTBOUND)
+				if (pSock->GetType() != CZNCSock::LISTENER) {
+					if (pSock->GetType() == CZNCSock::OUTBOUND)
 						Table.SetCell("Type", "Outbound");
 					else
 						Table.SetCell("Type", "Inbound");
