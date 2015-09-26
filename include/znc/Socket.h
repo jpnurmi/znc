@@ -67,66 +67,10 @@ public:
 	CSockManager();
 	virtual ~CSockManager();
 
-	bool ListenHost(u_short iPort, const CString& sSockName, const CString& sBindHost, bool bSSL = false, int iMaxConns = SOMAXCONN, CZNCSock *pcSock = nullptr, u_int iTimeout = 0, EAddrType eAddr = ADDR_ALL) {
-		CSListener L(iPort, sBindHost);
-
-		L.SetSockName(sSockName);
-		L.SetIsSSL(bSSL);
-		L.SetTimeout(iTimeout);
-		L.SetMaxConns(iMaxConns);
-
-#ifdef HAVE_IPV6
-		switch (eAddr) {
-			case ADDR_IPV4ONLY:
-				L.SetAFRequire(CSSockAddr::RAF_INET);
-				break;
-			case ADDR_IPV6ONLY:
-				L.SetAFRequire(CSSockAddr::RAF_INET6);
-				break;
-			case ADDR_ALL:
-				L.SetAFRequire(CSSockAddr::RAF_ANY);
-				break;
-		}
-#endif
-
-		return Listen(L, pcSock);
-	}
-
-	bool ListenAll(u_short iPort, const CString& sSockName, bool bSSL = false, int iMaxConns = SOMAXCONN, CZNCSock *pcSock = nullptr, u_int iTimeout = 0, EAddrType eAddr = ADDR_ALL) {
-		return ListenHost(iPort, sSockName, "", bSSL, iMaxConns, pcSock, iTimeout, eAddr);
-	}
-
-	u_short ListenRand(const CString& sSockName, const CString& sBindHost, bool bSSL = false, int iMaxConns = SOMAXCONN, CZNCSock *pcSock = nullptr, u_int iTimeout = 0, EAddrType eAddr = ADDR_ALL) {
-		unsigned short uPort = 0;
-		CSListener L(0, sBindHost);
-
-		L.SetSockName(sSockName);
-		L.SetIsSSL(bSSL);
-		L.SetTimeout(iTimeout);
-		L.SetMaxConns(iMaxConns);
-
-#ifdef HAVE_IPV6
-		switch (eAddr) {
-			case ADDR_IPV4ONLY:
-				L.SetAFRequire(CSSockAddr::RAF_INET);
-				break;
-			case ADDR_IPV6ONLY:
-				L.SetAFRequire(CSSockAddr::RAF_INET6);
-				break;
-			case ADDR_ALL:
-				L.SetAFRequire(CSSockAddr::RAF_ANY);
-				break;
-		}
-#endif
-
-		Listen(L, pcSock, &uPort);
-
-		return uPort;
-	}
-
-	u_short ListenAllRand(const CString& sSockName, bool bSSL = false, int iMaxConns = SOMAXCONN, CZNCSock *pcSock = nullptr, u_int iTimeout = 0, EAddrType eAddr = ADDR_ALL) {
-		return(ListenRand(sSockName, "", bSSL, iMaxConns, pcSock, iTimeout, eAddr));
-	}
+	bool ListenHost(u_short iPort, const CString& sSockName, const CString& sBindHost, bool bSSL = false, int iMaxConns = SOMAXCONN, CZNCSock *pcSock = nullptr, u_int iTimeout = 0, EAddrType eAddr = ADDR_ALL);
+	bool ListenAll(u_short iPort, const CString& sSockName, bool bSSL = false, int iMaxConns = SOMAXCONN, CZNCSock *pcSock = nullptr, u_int iTimeout = 0, EAddrType eAddr = ADDR_ALL);
+	u_short ListenRand(const CString& sSockName, const CString& sBindHost, bool bSSL = false, int iMaxConns = SOMAXCONN, CZNCSock *pcSock = nullptr, u_int iTimeout = 0, EAddrType eAddr = ADDR_ALL);
+	u_short ListenAllRand(const CString& sSockName, bool bSSL = false, int iMaxConns = SOMAXCONN, CZNCSock *pcSock = nullptr, u_int iTimeout = 0, EAddrType eAddr = ADDR_ALL);
 
 	void Connect(const CString& sHostname, u_short iPort, const CString& sSockName, int iTimeout = 60, bool bSSL = false, const CString& sBindHost = "", CZNCSock *pcSock = nullptr);
 	void FinishConnect(const CString& sHostname, u_short iPort, const CString& sSockName, int iTimeout, bool bSSL, const CString& sBindHost, CZNCSock *pcSock);
