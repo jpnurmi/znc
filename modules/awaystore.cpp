@@ -408,7 +408,7 @@ public:
 
 	EModRet OnChanMsg(CNick& nick, CChan& channel, CString& sMessage) override
 	{
-		if(m_bIsAway && m_chanMessages && sMessage.AsLower().find(m_pNetwork->GetCurNick().AsLower()) != CString::npos) {
+		if(m_bIsAway && m_chanMessages && sMessage.AsLower().find(GetNetwork()->GetCurNick().AsLower()) != CString::npos) {
 			AddMessage(time(nullptr), nick, channel.GetName() + " " + sMessage);
 		}
 		

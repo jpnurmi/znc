@@ -143,7 +143,6 @@ private:
 
 	static CString m_sHomePath;
 
-protected:
 	CString m_sLongName;  //!< Absolute filename (m_sPath + "/" + m_sShortName)
 	CString m_sShortName; //!< Filename alone, without path
 };
@@ -255,7 +254,6 @@ public:
 	}
 
 private:
-protected:
 	CFile::EFileAttr m_eSortAttr;
 	bool             m_bDesc;
 };

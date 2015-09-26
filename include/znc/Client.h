@@ -264,6 +264,7 @@ public:
 	const CIRCSock* GetIRCSock() const;
 	CIRCSock* GetIRCSock();
 	CString GetFullName() const;
+
 private:
 	void HandleCap(const CMessage& Message);
 	void RespondCap(const CString& sResponse);
@@ -292,7 +293,6 @@ private:
 	bool OnTopicMessage(CTopicMessage& Message);
 	bool OnOtherMessage(CMessage& Message);
 
-protected:
 	bool                 m_bGotPass;
 	bool                 m_bGotNick;
 	bool                 m_bGotUser;
@@ -327,6 +327,7 @@ protected:
 	SCString             m_ssServerDependentCaps;
 
 	friend class ClientTest;
+	friend class TestClient;
 };
 
 #endif // !ZNC_CLIENT_H

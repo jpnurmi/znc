@@ -58,7 +58,6 @@ public:
 	// !Getters
 
 private:
-protected:
 	CMessage m_Message;
 	CString  m_sText;
 };
@@ -91,8 +90,8 @@ public:
 	// Getters
 	unsigned int GetLineCount() const { return m_uLineCount; }
 	// !Getters
+
 private:
-protected:
 	unsigned int m_uLineCount;
 };
 

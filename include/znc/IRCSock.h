@@ -137,7 +137,7 @@ private:
 	void SendAltNick(const CString& sBadNick);
 	void SendNextCap();
 	void TrySend();
-protected:
+
 	bool                                m_bAuthed;
 	bool                                m_bNamesx;
 	bool                                m_bUHNames;
@@ -169,6 +169,7 @@ protected:
 	bool                                m_bFloodProtection;
 
 	friend class CIRCFloodTimer;
+	friend class TestIRCSock;
 };
 
 #endif // !ZNC_IRCSOCK_H
