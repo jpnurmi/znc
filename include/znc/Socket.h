@@ -129,56 +129,13 @@ public:
 	}
 
 	void Connect(const CString& sHostname, u_short iPort, const CString& sSockName, int iTimeout = 60, bool bSSL = false, const CString& sBindHost = "", CZNCSock *pcSock = nullptr);
-
-	unsigned int GetAnonConnectionCount(const CString &sIP) const;
-private:
 	void FinishConnect(const CString& sHostname, u_short iPort, const CString& sSockName, int iTimeout, bool bSSL, const CString& sBindHost, CZNCSock *pcSock);
 
+	unsigned int GetAnonConnectionCount(const CString &sIP) const;
+
+private:
 	class CTDNSMonitorFD;
 	friend class CTDNSMonitorFD;
-#ifdef HAVE_THREADED_DNS
-	struct TDNSTask {
-		TDNSTask() : sHostname(""), iPort(0), sSockName(""), iTimeout(0), bSSL(false), sBindhost(""), pcSock(nullptr), bDoneTarget(false), bDoneBind(false), aiTarget(nullptr), aiBind(nullptr) {}
-
-		TDNSTask(const TDNSTask&) = delete;
-		TDNSTask& operator=(const TDNSTask&) = delete;
-
-		CString   sHostname;
-		u_short   iPort;
-		CString   sSockName;
-		int       iTimeout;
-		bool      bSSL;
-		CString   sBindhost;
-		CZNCSock* pcSock;
-
-		bool      bDoneTarget;
-		bool      bDoneBind;
-		addrinfo* aiTarget;
-		addrinfo* aiBind;
-	};
-	class CDNSJob : public CJob {
-	public:
-		CDNSJob() : sHostname(""), task(nullptr), pManager(nullptr), bBind(false), iRes(0), aiResult(nullptr) {}
-
-		CDNSJob(const CDNSJob&) = delete;
-		CDNSJob& operator=(const CDNSJob&) = delete;
-
-		CString       sHostname;
-		TDNSTask*     task;
-		CSockManager* pManager;
-		bool          bBind;
-
-		int           iRes;
-		addrinfo*     aiResult;
-
-		void runThread() override;
-		void runMain() override;
-	};
-	void StartTDNSThread(TDNSTask* task, bool bBind);
-	void SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* aiResult);
-	static void* TDNSThread(void* argument);
-#endif
-protected:
 };
 
 /**
