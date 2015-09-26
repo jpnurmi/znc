@@ -129,7 +129,6 @@ public:
 	bool IsPlaybackActive() const { return m_bPlaybackActive; }
 	void SetPlaybackActive(bool bActive) { m_bPlaybackActive = bActive; }
 
-	void PutIRC(const CString& sLine);
 	/** Sends a raw data line to the client.
 	 *  @param sLine The line to be sent.
 	 *

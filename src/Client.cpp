@@ -262,7 +262,9 @@ void CClient::ReadLine(const CString& sData) {
 
 	if (bReturn) return;
 
-	PutIRC(Message.ToString(CMessage::ExcludePrefix | CMessage::ExcludeTags));
+	if (m_pNetwork) {
+		m_pNetwork->PutIRC(Message.ToString(CMessage::ExcludePrefix | CMessage::ExcludeTags));
+	}
 }
 
 void CClient::SetNick(const CString& s) {
@@ -488,12 +490,6 @@ void CClient::ReachedMaxBuffer() {
 void CClient::BouncedOff() {
 	PutStatusNotice("You are being disconnected because another user just authenticated as you.");
 	Close(CZNCSock::CLT_AFTERWRITE);
-}
-
-void CClient::PutIRC(const CString& sLine) {
-	if (m_pNetwork) {
-		m_pNetwork->PutIRC(sLine);
-	}
 }
 
 CString CClient::GetFullName() const {
@@ -983,7 +979,7 @@ bool CClient::OnActionMessage(CActionMessage& Message)
 		if (m_pNetwork) {
 			AddBuffer(Message);
 			EchoMessage(Message);
-			PutIRC(Message.ToString(CMessage::ExcludePrefix | CMessage::ExcludeTags));
+			m_pNetwork->PutIRC(Message.ToString(CMessage::ExcludePrefix | CMessage::ExcludeTags));
 		}
 	}
 
@@ -1026,7 +1022,7 @@ bool CClient::OnCTCPMessage(CCTCPMessage& Message)
 		if (m_pNetwork) {
 			AddBuffer(Message);
 			EchoMessage(Message);
-			PutIRC(Message.ToString(CMessage::ExcludePrefix | CMessage::ExcludeTags));
+			m_pNetwork->PutIRC(Message.ToString(CMessage::ExcludePrefix | CMessage::ExcludeTags));
 		}
 	}
 
@@ -1139,7 +1135,7 @@ bool CClient::OnNoticeMessage(CNoticeMessage& Message)
 		if (m_pNetwork) {
 			AddBuffer(Message);
 			EchoMessage(Message);
-			PutIRC(Message.ToString(CMessage::ExcludePrefix | CMessage::ExcludeTags));
+			m_pNetwork->PutIRC(Message.ToString(CMessage::ExcludePrefix | CMessage::ExcludeTags));
 		}
 	}
 
@@ -1245,7 +1241,7 @@ bool CClient::OnTextMessage(CTextMessage& Message)
 		if (m_pNetwork) {
 			AddBuffer(Message);
 			EchoMessage(Message);
-			PutIRC(Message.ToString(CMessage::ExcludePrefix | CMessage::ExcludeTags));
+			m_pNetwork->PutIRC(Message.ToString(CMessage::ExcludePrefix | CMessage::ExcludeTags));
 		}
 	}
 
