@@ -391,6 +391,67 @@ CSockManager::CSockManager() {
 CSockManager::~CSockManager() {
 }
 
+bool CSockManager::ListenHost(u_short iPort, const CString& sSockName, const CString& sBindHost, bool bSSL, int iMaxConns, CZNCSock* pcSock, u_int iTimeout, EAddrType eAddr) {
+	CSListener L(iPort, sBindHost);
+
+	L.SetSockName(sSockName);
+	L.SetIsSSL(bSSL);
+	L.SetTimeout(iTimeout);
+	L.SetMaxConns(iMaxConns);
+
+#ifdef HAVE_IPV6
+	switch (eAddr) {
+	case ADDR_IPV4ONLY:
+		L.SetAFRequire(CSSockAddr::RAF_INET);
+		break;
+	case ADDR_IPV6ONLY:
+		L.SetAFRequire(CSSockAddr::RAF_INET6);
+		break;
+	case ADDR_ALL:
+		L.SetAFRequire(CSSockAddr::RAF_ANY);
+		break;
+	}
+#endif
+
+	return Listen(L, pcSock);
+}
+
+bool CSockManager::ListenAll(u_short iPort, const CString& sSockName, bool bSSL, int iMaxConns, CZNCSock* pcSock, u_int iTimeout, EAddrType eAddr) {
+	return ListenHost(iPort, sSockName, "", bSSL, iMaxConns, pcSock, iTimeout, eAddr);
+}
+
+u_short CSockManager::ListenRand(const CString& sSockName, const CString& sBindHost, bool bSSL, int iMaxConns, CZNCSock* pcSock, u_int iTimeout, EAddrType eAddr) {
+	unsigned short uPort = 0;
+	CSListener L(0, sBindHost);
+
+	L.SetSockName(sSockName);
+	L.SetIsSSL(bSSL);
+	L.SetTimeout(iTimeout);
+	L.SetMaxConns(iMaxConns);
+
+#ifdef HAVE_IPV6
+	switch (eAddr) {
+	case ADDR_IPV4ONLY:
+		L.SetAFRequire(CSSockAddr::RAF_INET);
+		break;
+	case ADDR_IPV6ONLY:
+		L.SetAFRequire(CSSockAddr::RAF_INET6);
+		break;
+	case ADDR_ALL:
+		L.SetAFRequire(CSSockAddr::RAF_ANY);
+		break;
+	}
+#endif
+
+	Listen(L, pcSock, &uPort);
+
+	return uPort;
+}
+
+u_short CSockManager::ListenAllRand(const CString& sSockName, bool bSSL, int iMaxConns, CZNCSock* pcSock, u_int iTimeout, EAddrType eAddr) {
+	return(ListenRand(sSockName, "", bSSL, iMaxConns, pcSock, iTimeout, eAddr));
+}
+
 void CSockManager::Connect(const CString& sHostname, u_short iPort, const CString& sSockName, int iTimeout, bool bSSL, const CString& sBindHost, CZNCSock *pcSock) {
 	if (pcSock) {
 		pcSock->SetHostToVerifySSL(sHostname);
