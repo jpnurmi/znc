@@ -80,7 +80,6 @@ public:
 };
 static void StartTDNSThread(CSockManager* pManager, TDNSTask* task, bool bBind);
 static void SetTDNSThreadFinished(CSockManager* pManager, TDNSTask* task, bool bBind, addrinfo* aiResult);
-static void* TDNSThread(void* argument);
 #endif
 
 CZNCSock::CZNCSock(int timeout) : Csock(timeout), m_HostToVerifySSL(""), m_ssTrustedFingerprints(), m_ssCertVerificationErrors() {
