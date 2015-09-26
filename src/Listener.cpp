@@ -127,7 +127,8 @@ void CIncomingConnection::ReadLine(const CString& sLine) {
 			return;
 		}
 
-		pSock = new CClient();
+		CClient* pClient = new CClient();
+		pSock = pClient->GetSocket();
 		CZNC::Get().GetManager().SwapSockByAddr(pSock, this);
 
 		// And don't forget to give it some sane name / timeout

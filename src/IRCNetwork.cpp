@@ -280,7 +280,7 @@ CIRCNetwork::~CIRCNetwork() {
 
 	// Delete clients
 	while (!m_vClients.empty()) {
-		CZNC::Get().GetManager().DelSockByAddr(m_vClients[0]);
+		CZNC::Get().GetManager().DelSockByAddr(m_vClients[0]->GetSocket());
 	}
 	m_vClients.clear();
 

@@ -110,7 +110,7 @@ CUser::~CUser() {
 
 	// Delete clients
 	while (!m_vClients.empty()) {
-		CZNC::Get().GetManager().DelSockByAddr(m_vClients[0]);
+		CZNC::Get().GetManager().DelSockByAddr(m_vClients[0]->GetSocket());
 	}
 	m_vClients.clear();
 
@@ -714,9 +714,10 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
 		AddAllowedHost(sHost);
 	}
 
-	for (CClient* pSock : m_vClients) {
+	for (CClient* pClient : m_vClients) {
+		CZNCSock* pSock = pClient->GetSocket();
 		if (!IsHostAllowed(pSock->GetRemoteIP())) {
-			pSock->PutStatusNotice("You are being disconnected because your IP is no longer allowed to connect to this user");
+			pClient->PutStatusNotice("You are being disconnected because your IP is no longer allowed to connect to this user");
 			pSock->Close();
 		}
 	}
