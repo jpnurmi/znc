@@ -17,6 +17,7 @@
  * limitations under the License.
  */
 
+#include <znc/Modules.h>
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 #include <znc/Chan.h>

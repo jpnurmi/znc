@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include <znc/Chan.h>
 #include <znc/Modules.h>
+#include <znc/Chan.h>
 
 using std::vector;
 

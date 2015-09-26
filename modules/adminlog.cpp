@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <znc/Modules.h>
 #include <znc/FileUtils.h>
 #include <znc/Server.h>
 #include <znc/IRCNetwork.h>

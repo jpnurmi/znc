@@ -16,10 +16,10 @@
 
 #include <Python.h>
 
+#include <znc/Modules.h>
 #include <znc/Chan.h>
 #include <znc/FileUtils.h>
 #include <znc/IRCSock.h>
-#include <znc/Modules.h>
 #include <znc/Nick.h>
 #include <znc/User.h>
 #include <znc/znc.h>

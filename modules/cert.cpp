@@ -16,9 +16,9 @@
 
 #define REQUIRESSL
 
+#include <znc/Modules.h>
 #include <znc/FileUtils.h>
 #include <znc/User.h>
-#include <znc/Modules.h>
 #include <znc/IRCSock.h>
 
 class CCertMod : public CModule {
