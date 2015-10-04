@@ -646,16 +646,18 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 		}
 	}
 
-	bool bClearQuery = m_pUser->AutoClearQueryBuffer();
+	vector<CQuery*> vQueries;
 	for (CQuery* pQuery : m_vQueries) {
-		pQuery->SendBuffer(pClient);
-		if (bClearQuery) {
-			delete pQuery;
+		if (!pQuery->IsDetached()) {
+			pQuery->SendBuffer(pClient);
+			if (m_pUser->AutoClearQueryBuffer()) {
+				delete pQuery;
+				continue;
+			}
 		}
+		vQueries.push_back(pQuery);
 	}
-	if (bClearQuery) {
-		m_vQueries.clear();
-	}
+	m_vQueries = vQueries;
 
 	uSize = m_NoticeBuffer.Size();
 	for (uIdx = 0; uIdx < uSize; uIdx++) {
